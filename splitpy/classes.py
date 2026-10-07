@@ -1311,7 +1311,7 @@ class DiagPlot(object):
                 axSC1, axSC2, axSC3, axSC4]
 
         # # Make sure figure is open
-        axes[0].show()
+        # axes[0].show()
 
         # Store handes as attribute
         self.axes = axes
@@ -1495,7 +1495,7 @@ class DiagPlot(object):
         levels = np.arange(Emin, Emax, dE)
         cmap = plt.cm.RdYlBu_r
         cset1 = plt.contour(X, Y, E2, levels,
-                            cmap=plt.cm.get_cmap(cmap, len(levels)))
+                            cmap=plt.get_cmap(cmap, len(levels)))
 
         matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
         errc = self.split.RC_res.errc
@@ -1554,7 +1554,7 @@ class DiagPlot(object):
         levels = np.arange(Emin, Emax, dE)
         cmap = plt.cm.RdYlBu_r
         cset1 = plt.contour(X, Y, E2, levels,
-                            cmap=plt.cm.get_cmap(cmap, len(levels)))
+                            cmap=plt.get_cmap(cmap, len(levels)))
 
         errc = self.split.SC_res.errc
         ecset = plt.contour(X, Y, E2, (errc,), colors='magenta',

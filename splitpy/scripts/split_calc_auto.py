@@ -41,7 +41,7 @@ from argparse import ArgumentParser
 from os.path import exists as exist
 from pathlib import Path
 
-matplotlib.use('Qt5Agg')
+matplotlib.use('Agg')
 
 
 def get_arguments_calc_auto(argv=None):
@@ -92,7 +92,7 @@ def get_arguments_calc_auto(argv=None):
         "negate each other, and both are set to " +
         "false (every repeat is prompted). [Default False]")
     parser.add_argument(
-        "--zcomp", 
+        "--zcomp",
         dest="zcomp",
         type=str,
         default="Z",
@@ -157,11 +157,11 @@ def get_arguments_calc_auto(argv=None):
         "waveform server (--user-auth='username:authpassword') to access " +
         "and download restricted data. [Default no user and password]")
     ServerGroup.add_argument(
-        "--eida-token", 
-        action="store", 
+        "--eida-token",
+        action="store",
         type=str,
-        dest="tokenfile", 
-        default=None, 
+        dest="tokenfile",
+        default=None,
         help="Token for EIDA authentication mechanism, see " +
         "http://geofon.gfz-potsdam.de/waveform/archive/auth/index.php. "
         "If a token is provided, argument --user-auth will be ignored. "
@@ -789,8 +789,24 @@ def main(args=None):
                         dplot = DiagPlot(split)
                         dplot.plot_diagnostic()
                         plt.figure(dplot.axes[0].number)
-                        plt.show()
-
+                        # plt.show()
+                        m = split.meta
+                        figname = (
+                            f"{stkey}_{timekey}_{args.phase}"
+                            f"_M{m.mag:.1f}"
+                            f"_gac{m.gac:.1f}"
+                            f"_baz{m.baz:.0f}"
+                            f"_dep{m.dep:.0f}"
+                            f"_snrq{m.snrq:.1f}"
+                            f"_snrt{m.snrt:.1f}"
+                            f"_f{args.fmin:g}-{args.fmax:g}"
+                            f"_{'null' if split.null else 'nonnull'}"
+                            f"_{split.quality}"
+                            ".png")
+                        figfile = datadir / figname
+                        print(f"Diagnostic figure saved to {figfile.resolve()}")
+                        plt.savefig(figfile, dpi=150, bbox_inches='tight')
+                        plt.close('all')
 
 if __name__ == "__main__":
 
