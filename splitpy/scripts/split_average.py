@@ -455,8 +455,13 @@ def main(args=None):
         # Add RC results to plot
         if args.RCinc:
             ax1.scatter(phi*np.pi/180., dt, c='b')
-            ax1.plot(np.array([meanphiRC, meanphiRC])*np.pi /
-                     180., [0, meandtRC], 'b', linewidth=2)
+            # mean splitting vector
+            ax1.plot(
+                np.array([meanphiRC, meanphiRC]) * np.pi / 180.0,
+                [0, 2*meandtRC], # Radial distance (Length): from 0 to mean delay time
+                "b", # color
+                linewidth=2,
+            )
 
         # Convert SC results to floats
         phi = np.array([float(i) for i in phiSC])
@@ -470,8 +475,13 @@ def main(args=None):
         # Add SC results to plot
         if args.SCinc:
             ax1.scatter(phi*np.pi/180., dt, c='coral')
-            ax1.plot(np.array([meanphiSC, meanphiSC])*np.pi /
-                     180., [0, meandtSC], 'coral', linewidth=2)
+            # mean splitting vector
+            ax1.plot(
+                np.array([meanphiSC, meanphiSC]) * np.pi / 180.0,
+                [0, 2*meandtSC], # Radial distance (Length): from 0 to mean delay time
+                "coral", # color
+                linewidth=2,
+            )
 
         ax1.set_rmax(dtmax)
 
@@ -504,14 +514,14 @@ def main(args=None):
         if args.SCinc:
 
             ax2.axhspan(meanphiSC + stdphiSC, meanphiSC -
-                        stdphiSC, facecolor='orange', alpha=0.2)
+                        stdphiSC, facecolor='coral', alpha=0.2)
             ax2.axhline(meanphiSC, c='coral')
 
             # Plot individual SC results
-            ax2.errorbar(baz, phi, yerr=Dphi, fmt='o', c='orange', label='SC')
+            ax2.errorbar(baz, phi, yerr=Dphi, fmt='o', c='coral', label='SC')
 
         ax2.set_title('Station: ' + stkey)
-        ax2.set_ylabel(r'Fast axis, $\phi$ (degree)')
+        ax2.set_ylabel(r'Fast axis, $\phi$ (º)')
         ax2.set_ylim(-95, 95)
         ax2.legend(loc=0, numpoints=1)
 
@@ -537,13 +547,13 @@ def main(args=None):
         if args.SCinc:
 
             ax3.axhspan(meandtSC + stddtSC, meandtSC -
-                        stddtSC, facecolor='orange', alpha=0.2)
+                        stddtSC, facecolor='coral', alpha=0.2)
             ax3.axhline(meandtSC, c='coral')
 
             # Plot individual SC results
-            ax3.errorbar(baz, dt, yerr=Ddt, fmt='o', c='orange', label='SC')
+            ax3.errorbar(baz, dt, yerr=Ddt, fmt='o', c='coral', label='SC')
 
-        ax3.set_ylabel(r'Delay time, $\delta t$ (seconds)')
+        ax3.set_ylabel(r'Delay time, $\delta t$ (s)')
         ax3.set_ylim(0, dtmax)
 
         ax3.set_xlabel('Back-azimuth (degree)')
@@ -573,6 +583,7 @@ def main(args=None):
             DT = (meandtRC + meandtSC)/2.
             dPHI = (stdphiRC + stdphiSC)/2.
             dDT = (stddtRC + stddtSC)/2.
+            # mean splitting from both methods
             ax1.plot(np.array([PHI, PHI])*np.pi/180.,
                      [0, DT], 'r', linewidth=2, alpha=0.8)
             ax2.axhline(PHI, c='coral', alpha=0.5, linewidth=2)
