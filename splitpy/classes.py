@@ -1372,13 +1372,28 @@ class DiagPlot(object):
         trQ_tmp.trim(t1, t2)
         trT_tmp = self.split.dataLQT.select(component='T')[0].copy()
         trT_tmp.trim(t1, t2)
-        trE_tmp = self.split.dataZNE.select(component='E')[0].copy()
-        trE_tmp.trim(t1, t2)
-        trN_tmp = self.split.dataZNE.select(component='N')[0].copy()
-        trN_tmp.trim(t1, t2)
+
+        # The splitting calculation (calc.split_RotCorr / split_SilverChan)
+        # works on dataLQT, which has been bandpass filtered and is Hann
+        # tapered (10%) after trimming. The corrected traces plotted below
+        # therefore carry that filter and taper. The 'raw' particle motion
+        # must be built from exactly the same input, otherwise it is being
+        # compared against broadband (only low-passed), untapered data.
+        # (Plot-only: nothing here feeds back into the calculation.)
+        trQ_untap = trQ_tmp.copy()
+        trT_untap = trT_tmp.copy()
+        for _tr in (trL_tmp, trQ_tmp, trT_tmp):
+            _tr.taper(max_percentage=0.1, type='hann')
 
         # Rotate seismograms for plots
         M = rot3D(self.split.meta.inc, self.split.meta.baz)
+        ZEN_raw = np.dot(
+            np.transpose(M),
+            [trL_tmp.data, trQ_tmp.data, trT_tmp.data])
+        trE_tmp = trQ_tmp.copy()
+        trE_tmp.data = ZEN_raw[1, :]
+        trN_tmp = trQ_tmp.copy()
+        trN_tmp.data = ZEN_raw[2, :]
         ZEN_RC = np.dot(
             np.transpose(M),
             [trL_tmp.data, self.split.RC_res.trQ_c.data,
@@ -1392,14 +1407,14 @@ class DiagPlot(object):
         E_SC = ZEN_SC[1, :]
         N_SC = ZEN_SC[2, :]
 
-        # Original time series
-        taxis = np.arange(trQ_tmp.stats.npts)/trQ_tmp.stats.sampling_rate
-        max1 = np.abs(trQ_tmp.data).max()
-        max2 = np.abs(trT_tmp.data).max()
+        # Original time series (untapered copies)
+        taxis = np.arange(trQ_untap.stats.npts)/trQ_untap.stats.sampling_rate
+        max1 = np.abs(trQ_untap.data).max()
+        max2 = np.abs(trT_untap.data).max()
         mmax = np.amax([max1, max2])
 
-        self.axes[1].plot(taxis, trQ_tmp.data/mmax, 'b--')
-        self.axes[1].plot(taxis, trT_tmp.data/mmax, 'r')
+        self.axes[1].plot(taxis, trQ_untap.data/mmax, 'b--')
+        self.axes[1].plot(taxis, trT_untap.data/mmax, 'r')
         self.axes[1].text(taxis[0], 1, 'Q', verticalalignment='top',
                           horizontalalignment='left', color='b')
         self.axes[1].text(taxis[0], -1, 'T', verticalalignment='bottom',
