@@ -650,7 +650,7 @@ class Split(object):
 
         if t1 is None and t2 is None:
             t1 = self.meta.time + self.meta.ttime - 5.
-            t2 = self.meta.time + self.meta.ttime + 25.
+            t2 = self.meta.time + self.meta.ttime + 20.
 
         # Define signal
         trQ = self.dataLQT.select(component='Q')[0].copy()
@@ -1047,7 +1047,7 @@ class PickPlot(object):
         # Default start and end times
         if t1 is None and t2 is None:
             t1 = self.split.meta.time + self.split.meta.ttime - 5.
-            t2 = self.split.meta.time + self.split.meta.ttime + 25.
+            t2 = self.split.meta.time + self.split.meta.ttime + 20.
 
         # Define signal and noise
         trL = self.split.dataLQT.select(component='L')[0].copy()
@@ -1332,7 +1332,7 @@ class DiagPlot(object):
 
         if t1 is None and t2 is None:
             t1 = self.split.meta.time + self.split.meta.ttime - 5.
-            t2 = self.split.meta.time + self.split.meta.ttime + 25.
+            t2 = self.split.meta.time + self.split.meta.ttime + 20.
 
         def rot3D(inc, baz):
             """
